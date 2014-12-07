@@ -19,7 +19,7 @@ int main()
 	if (serverSocket == -1)
 	{
 		printError("can't connect to server");
-		return;
+		return 1;
 	}
 
 	run(serverSocket);
