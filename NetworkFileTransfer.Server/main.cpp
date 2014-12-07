@@ -110,28 +110,28 @@ SOCKET getSocket(const char* hostname, const char* port)
 void run(SOCKET serverSocket)
 {
 	SOCKET socket;
-	sockaddr_storage address;
+	sockaddr address;
 	socklen_t addressSize;
 
 	int recvSize;
 	const int bufferSize = 255;
 	char buffer[bufferSize];
-	char saddress[INET6_ADDRSTRLEN];
+	char saddress[INET_ADDRSTRLEN];
 
 	printf("server: waiting for connections...\n");
 
 	while (1)
 	{
 		addressSize = sizeof(address);
-		socket = accept(serverSocket, (sockaddr*)&address, &addressSize);
+		socket = accept(serverSocket, &address, &addressSize);
 		if (socket == -1)
 		{
 			printError("accept");
 			continue;
 		}
 
-		/*inet_ntop(address.ss_family, convertSocketAddress((sockaddr*)&address), saddress, sizeof(saddress));
-		printf("server: got connection from %s\n", saddress);*/
+		inet_ntop(address.sa_family, &((sockaddr_in*)&address)->sin_addr, saddress, sizeof(saddress));
+		printf("server: got connection from %s\n", saddress);
 
 		while ((recvSize = recv(socket, buffer, bufferSize - 1, 0)) != -1)
 		{
