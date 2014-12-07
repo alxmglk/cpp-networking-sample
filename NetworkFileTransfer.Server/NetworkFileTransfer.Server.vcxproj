@@ -78,17 +78,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ServerHelper.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="ServerHelper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NetworkFileTransfer.Core\NetworkFileTransfer.Core.vcxproj">
-      <Project>{cd764be9-785e-4570-8c39-e0a4009314ea}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

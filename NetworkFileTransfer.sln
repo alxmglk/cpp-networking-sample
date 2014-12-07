@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkFileTransfer.Core", "NetworkFileTransfer.Core\NetworkFileTransfer.Core.vcxproj", "{CD764BE9-785E-4570-8C39-E0A4009314EA}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkFileTransfer.Server", "NetworkFileTransfer.Server\NetworkFileTransfer.Server.vcxproj", "{EAB26C41-71AD-4220-B4A4-F1B45B69D34F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkFileTransfer.Client", "NetworkFileTransfer.Client\NetworkFileTransfer.Client.vcxproj", "{05EADD8D-11FE-4A59-95FA-FC78A90AB499}"
@@ -15,10 +13,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CD764BE9-785E-4570-8C39-E0A4009314EA}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CD764BE9-785E-4570-8C39-E0A4009314EA}.Debug|Win32.Build.0 = Debug|Win32
-		{CD764BE9-785E-4570-8C39-E0A4009314EA}.Release|Win32.ActiveCfg = Release|Win32
-		{CD764BE9-785E-4570-8C39-E0A4009314EA}.Release|Win32.Build.0 = Release|Win32
 		{EAB26C41-71AD-4220-B4A4-F1B45B69D34F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{EAB26C41-71AD-4220-B4A4-F1B45B69D34F}.Debug|Win32.Build.0 = Debug|Win32
 		{EAB26C41-71AD-4220-B4A4-F1B45B69D34F}.Release|Win32.ActiveCfg = Release|Win32
