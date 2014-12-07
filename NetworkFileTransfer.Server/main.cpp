@@ -13,12 +13,6 @@ void printError(const char* message);
 SOCKET getSocket(const char* host, const char* port);
 void run(SOCKET serverSocket);
 
-typedef struct {
-	DWORD threadId;
-	HANDLE threadHandle;
-	SOCKET socket;
-} TDATA;
-
 int main()
 {
 	WSAInitialize();
@@ -142,16 +136,16 @@ void parseMessage(const char* message, char* expression, char* operation)
 
 DWORD WINAPI handleRequest(LPVOID param)
 {
-	TDATA* data = (TDATA*)param;
+	SOCKET socket = *((SOCKET*)param);
 
 	int recvSize;
 	const int bufferSize = 255;
 	char buffer[bufferSize];
 
-	if ((recvSize = recv(data->socket, buffer, bufferSize - 1, 0)) != -1)
+	if ((recvSize = recv(socket, buffer, bufferSize - 1, 0)) != -1)
 	{
 		buffer[recvSize] = '\0';
-		
+
 		char expression[255];
 		char operation[15];
 
@@ -160,7 +154,7 @@ DWORD WINAPI handleRequest(LPVOID param)
 		ExpressionEvaluator evaluator;
 		char* result = evaluator.evaluate(expression, operation);
 
-		if (send(data->socket, result, strlen(result), 0) == -1)
+		if (send(socket, result, strlen(result), 0) == -1)
 		{
 			printError("send");
 		}
@@ -168,9 +162,7 @@ DWORD WINAPI handleRequest(LPVOID param)
 		delete[] result;
 	}
 
-	closesocket(data->socket);
-
-	CloseHandle(data->threadHandle);
+	closesocket(socket);
 
 	return 0;
 }
@@ -200,11 +192,9 @@ void run(SOCKET serverSocket)
 		inet_ntop(address.sa_family, &((sockaddr_in*)&address)->sin_addr, saddress, sizeof(saddress));
 		printf("server: got connection from %s\n", saddress);
 
-		TDATA threadData;
-		threadData.socket = socket;
+		DWORD threadId;
+		HANDLE thread = CreateThread(NULL, 0, handleRequest, &socket, 0, &threadId);
 
-		HANDLE thread = CreateThread(NULL, 0, handleRequest, &threadData, 0, &(threadData.threadId));
-
-		threadData.threadHandle = thread;
+		CloseHandle(thread);
 	}
 }
