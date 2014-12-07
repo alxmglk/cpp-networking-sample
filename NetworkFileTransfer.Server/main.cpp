@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <WS2tcpip.h>
 #include <windows.h>
+#include "ExpressionEvaluator.h"
 
 const char* host = "127.0.0.1";
 const char* port = "33444";
@@ -107,6 +108,31 @@ SOCKET getSocket(const char* hostname, const char* port)
 	return socketId;
 }
 
+void parseMessage(const char* message, char* expression, char* operation)
+{
+	int messageIndex = 0;
+
+	// read expression
+	int i = 0;
+	for (; message[messageIndex] != '|' && message[messageIndex] != '\0'; ++messageIndex, ++i)
+	{
+		expression[i] = message[messageIndex];
+	}
+
+	expression[i] = '\0';
+
+	// read operation
+	++messageIndex;
+	
+	i = 0;
+	for (; message[messageIndex] != '\0'; ++i, ++messageIndex)
+	{
+		operation[i] = message[messageIndex];
+	}
+
+	operation[i] = '\0';
+}
+
 void run(SOCKET serverSocket)
 {
 	SOCKET socket;
@@ -114,15 +140,18 @@ void run(SOCKET serverSocket)
 	socklen_t addressSize;
 
 	int recvSize;
+	char saddress[INET_ADDRSTRLEN];
+
 	const int bufferSize = 255;
 	char buffer[bufferSize];
-	char saddress[INET_ADDRSTRLEN];
 
 	printf("server: waiting for connections...\n");
 
 	while (1)
 	{
 		addressSize = sizeof(address);
+
+		// Wating for client connection
 		socket = accept(serverSocket, &address, &addressSize);
 		if (socket == -1)
 		{
@@ -133,23 +162,27 @@ void run(SOCKET serverSocket)
 		inet_ntop(address.sa_family, &((sockaddr_in*)&address)->sin_addr, saddress, sizeof(saddress));
 		printf("server: got connection from %s\n", saddress);
 
-		while ((recvSize = recv(socket, buffer, bufferSize - 1, 0)) != -1)
+		if ((recvSize = recv(socket, buffer, bufferSize - 1, 0)) != -1)
 		{
 			buffer[recvSize] = '\0';
 
-			printf("Received from client: %s\n", buffer);
+			// Parse input: divide on two parts - expression and operation.
+			char expression[255];
+			char operation[15];
 
-			if (send(socket, buffer, recvSize, 0) == -1)
+			parseMessage(buffer, expression, operation);
+
+			ExpressionEvaluator evaluator;
+			char* result = evaluator.evaluate(expression, operation);
+
+			if (send(socket, result, strlen(result), 0) == -1)
 			{
 				printError("send");
 			}
 
-			if (strcmp(buffer, "end") == 0)
-			{
-				printf("Closing connection with client: %s\n", saddress);
-				closesocket(socket);
-				break;
-			}
+			delete[] result;
 		}
 	}
+
+	closesocket(socket);
 }
