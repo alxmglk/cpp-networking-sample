@@ -100,33 +100,28 @@ void run(SOCKET serverSocket)
 	char buffer[bufferSize];
 	int length = 0;
 
-	while (1)
+	printf("Enter expression and operation: \n");
+
+	// read expression
+	scanf("%[^\n]s", buffer);
+	length = strlen(buffer);
+	buffer[length] = '|';
+
+	// read operation
+	scanf("%s", buffer + length + 1);
+	length = strlen(buffer);
+
+	if (send(serverSocket, buffer, length, 0) == -1)
 	{
-		printf("Enter expression and operation: \n");
-
-		// read expression
-		scanf("%[^\n]s", buffer);
-		length = strlen(buffer);
-		buffer[length] = '|';
-
-		scanf("%s", buffer + length + 1);
-		length = strlen(buffer);
-
-		// Send expression.
-		if (send(serverSocket, buffer, length, 0) == -1)
-		{
-			break;
-		}
-
-		if ((length = recv(serverSocket, buffer, bufferSize - 1, 0)) == -1)
-		{
-			break;
-		}
-
-		buffer[length] = '\0';
-
-		printf("Result: %s\n\n", buffer);
+		return;
 	}
 
-	printf("\nServer has closed the connection\n");
+	if ((length = recv(serverSocket, buffer, bufferSize - 1, 0)) == -1)
+	{
+		return;
+	}
+
+	buffer[length] = '\0';
+
+	printf("Result: %s\n\n", buffer);	
 }
